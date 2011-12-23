@@ -66,7 +66,16 @@ enum {
      * SurfaceFlinger will only honor this flag when the layer has no blending
      *
      */
-    HWC_HINT_CLEAR_FB       = 0x00000002
+    HWC_HINT_CLEAR_FB       = 0x00000002,
+
+    /*
+     * HWC sets the HWC_HINT_DRAW_S3D_SS or HWC_HINT_DRAW_S3D_TB to tell
+     * Surfaceflinger that currently a S3D video layer is being drawn so
+     * convert the other layers to S3D format of Video while composing
+     *
+     */
+    HWC_HINT_DRAW_S3D_SIDE_BY_SIDE    = 0x00000004,
+    HWC_HINT_DRAW_S3D_TOP_BOTTOM      = 0x00000008
 };
 
 /*
@@ -86,7 +95,7 @@ enum {
      * needs to draw this layer.
      */
     HWC_LAYER_NOT_UPDATING = 0x00000002,
-
+    
     /* implementation-specific private usage flags */
     HWC_FLAGS_PRIVATE_0       = 0x10000000,
     HWC_FLAGS_PRIVATE_1       = 0x20000000,
@@ -171,7 +180,7 @@ typedef struct hwc_layer {
 
     /* blending to apply during composition */
     int32_t blending;
-    
+
     /* alpha value of the layer */
     int32_t alpha;
 
@@ -307,16 +316,6 @@ typedef struct hwc_composer_device {
      * a NULL list parameter or a numHwLayers of zero indicates that the
      * entire composition has been handled by SurfaceFlinger with OpenGL ES.
      * In this case, (*set)() behaves just like eglSwapBuffers().
-     *
-     * dpy, sur, and list are set to NULL to indicate that the screen is
-     * turning off. This happens WITHOUT prepare() being called first.
-     * This is a good time to free h/w resources and/or power
-     * the relevant h/w blocks down.
-     *
-     * IMPORTANT NOTE: there is an implicit layer containing opaque black
-     * pixels behind all the layers in the list.
-     * It is the responsibility of the hwcomposer module to make
-     * sure black pixels are output (or blended from).
      *
      * returns: 0 on success. An negative error code on error:
      *    HWC_EGL_ERROR: eglGetError() will provide the proper error code
