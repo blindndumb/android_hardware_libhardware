@@ -80,6 +80,7 @@ enum {
 #else
     HWC_HINT_CLEAR_FB       = 0x00000002
 #endif
+
 };
 
 /*
@@ -213,6 +214,7 @@ enum {
      */
     HWC_SKIP_COMPOSITION = 0x00000002
 #endif
+
 };
 
 /*
@@ -313,6 +315,16 @@ typedef struct hwc_composer_device {
      * entire composition has been handled by SurfaceFlinger with OpenGL ES.
      * In this case, (*set)() behaves just like eglSwapBuffers().
      *
+     * dpy, sur, and list are set to NULL to indicate that the screen is
+     * turning off. This happens WITHOUT prepare() being called first.
+     * This is a good time to free h/w resources and/or power
+     * the relevant h/w blocks down.
+     *
+     * IMPORTANT NOTE: there is an implicit layer containing opaque black
+     * pixels behind all the layers in the list.
+     * It is the responsibility of the hwcomposer module to make
+     * sure black pixels are output (or blended from).
+     *
      * returns: 0 on success. An negative error code on error:
      *    HWC_EGL_ERROR: eglGetError() will provide the proper error code
      *    Another code for non EGL errors.
@@ -350,9 +362,9 @@ typedef struct hwc_composer_device {
 #ifdef QCOM_HARDWARE
     /*
      * This API is called by Surfaceflinger to inform the HWC about the
-     * HDMI status.
+     * custom events(external display).
      */
-    void (*enableHDMIOutput)(struct hwc_composer_device* dev, bool enable);
+    void (*perform)(struct hwc_composer_device* dev, int event, int value);
 #endif
 
 } hwc_composer_device_t;
