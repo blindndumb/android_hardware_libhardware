@@ -66,6 +66,7 @@ typedef struct framebuffer_device_t {
 
     int reserved[8];
 
+    const int       numFramebuffers;
     /*
      * requests a specific swap-interval (same definition than EGL)
      *
