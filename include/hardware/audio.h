@@ -296,14 +296,6 @@ static inline size_t audio_stream_frame_size(struct audio_stream *s)
     size_t chan_samp_sz;
 
     switch (s->get_format(s)) {
-#ifdef QCOM_HARDWARE
-    case AUDIO_FORMAT_EVRC:
-        chan_samp_sz = 23;
-        break;
-    case AUDIO_FORMAT_QCELP:
-        chan_samp_sz = 35;
-        break;
-#endif
     case AUDIO_FORMAT_PCM_16_BIT:
         chan_samp_sz = sizeof(int16_t);
         break;
